@@ -99,8 +99,9 @@ class CPU:
         ADD = 0b10100000
         CMP = 0b10100111
         JMP = 0b01010100
+        JEQ = 0b01010101
 
-        self.trace()
+        # self.trace()
         running = True
 
         while running:
@@ -171,6 +172,13 @@ class CPU:
                 # Jump to the address stored in the given register
                 # Set the PC to the address stored in the given register
                 self.pc = self.reg[operand_a]
+
+            elif IR == JEQ:
+                # If equal flag is set (true), jump to the address stored in the given register
+                if self.flag == 0b0000001:
+                    self.pc = self.reg[operand_a]
+                else:
+                    self.pc += 2
 
             else:
                 print(f"Unknown instruction: {IR}")
