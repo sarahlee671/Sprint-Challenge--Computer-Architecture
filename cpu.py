@@ -10,7 +10,7 @@ class CPU:
         self.pc = 0
         #R7 is reserved as the SP
         self.reg[7] = 0xF4
-        self.flag = 0
+        self.flag = 0b00000000 #00000LGE
 
     def ram_read(self, MAR): # MAR = Memory Address Register
         return self.ram[MAR]
@@ -49,15 +49,15 @@ class CPU:
             self.reg[reg_a] *= self.reg[reg_b]
 
         elif op == "CMP":
-            # if the two register are equal in value, set the flag equal to 1
+            # if the two register are equal in value, set the E flag equal to 1
             if self.reg[reg_a] == self.reg[reg_b]:
-                self.flag = 1
-            # if registerA is less than registerB, set the flag to 1
+                self.flag = 0b00000001
+            # if registerA is less than registerB, set the L flag to 1
             elif self.reg[reg_a] < self.reg[reg_b]:
-                self.flag = 1
-            #if registerA is greater than registerB, set the flag to 1
+                self.flag = 0b00000100
+            #if registerA is greater than registerB, set the G flag to 1
             elif self.reg[reg_a] > self.reg[reg_b]:
-                self.flag = 1
+                self.flag = 0b00000010
             # otherwise set to 0
             else:
                 self.flag = 0
