@@ -10,7 +10,7 @@ class CPU:
         self.pc = 0
         #R7 is reserved as the SP
         self.reg[7] = 0xF4
-        self.flag = 0b0000000
+        self.flag = 0
 
     def ram_read(self, MAR): # MAR = Memory Address Register
         return self.ram[MAR]
@@ -51,16 +51,16 @@ class CPU:
         elif op == "CMP":
             # if the two register are equal in value, set the flag equal to 1
             if self.reg[reg_a] == self.reg[reg_b]:
-                self.flag = 0b00000001
+                self.flag = 1
             # if registerA is less than registerB, set the flag to 1
             elif self.reg[reg_a] < self.reg[reg_b]:
-                self.flag = 0b00000001
+                self.flag = 1
             #if registerA is greater than registerB, set the flag to 1
             elif self.reg[reg_a] > self.reg[reg_b]:
-                self.flag = 0b00000001
+                self.flag = 1
             # otherwise set to 0
             else:
-                self.flag = 0b00000000
+                self.flag = 0
 
         else:
             raise Exception("Unsupported ALU operation")
@@ -100,8 +100,9 @@ class CPU:
         CMP = 0b10100111
         JMP = 0b01010100
         JEQ = 0b01010101
+        JNE = 0b01010110
 
-        # self.trace()
+        self.trace()
         running = True
 
         while running:
@@ -175,7 +176,14 @@ class CPU:
 
             elif IR == JEQ:
                 # If equal flag is set (true), jump to the address stored in the given register
-                if self.flag == 0b0000001:
+                if self.flag == 1:
+                    self.pc = self.reg[operand_a]
+                else:
+                    self.pc += 2
+
+            elif IR == JNE:
+                # If E flag is clear (false, 0), jump to the address stored in the given register.
+                if self.flag != 1:
                     self.pc = self.reg[operand_a]
                 else:
                     self.pc += 2
