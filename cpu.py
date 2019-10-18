@@ -44,8 +44,10 @@ class CPU:
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
+
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
+
         elif op == "CMP":
             # if the two register are equal in value, set the flag equal to 1
             if self.reg[reg_a] == self.reg[reg_b]:
@@ -59,6 +61,7 @@ class CPU:
             # otherwise set to 0
             else:
                 self.flag = 0b00000000
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -95,11 +98,13 @@ class CPU:
         RET = 0b00010001
         ADD = 0b10100000
         CMP = 0b10100111
+        JMP = 0b01010100
 
+        self.trace()
         running = True
 
         while running:
-            
+
             IR = self.ram[self.pc]
             #register
             operand_a = self.ram_read(self.pc + 1)
@@ -157,6 +162,15 @@ class CPU:
                 self.pc = self.ram[self.reg[SP]]
                 #Pop the value from the top of the stack and store it in the PC
                 self.reg[SP] += 1
+            
+            elif IR == CMP:
+                self.alu("CMP", operand_a, operand_b)
+                self.pc += 3
+
+            elif IR == JMP:
+                # Jump to the address stored in the given register
+                # Set the PC to the address stored in the given register
+                self.pc = self.reg[operand_a]
 
             else:
                 print(f"Unknown instruction: {IR}")
